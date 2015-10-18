@@ -176,6 +176,8 @@ function BeginRound(currentRound, waves, players, totalRounds)
                                            a.Owner = player.Player
                                          end)
                                        end)
+
+                                       Media.PlaySpeechNotification(player.Player, 'TimerStarted')
                                      end
                                    end)
 
