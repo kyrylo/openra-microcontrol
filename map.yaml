@@ -270,88 +270,88 @@ Actors:
 		Owner: Neutral
 		Location: 44,56
 	ASpawn: mpspawn
-		Owner: Multi0
+		Owner: Neutral
 		Location: 6,6
 	AWaypoint1: waypoint
-		Owner: Multi0
+		Owner: Neutral
 		Location: 3,7
 	AWaypoint2: waypoint
-		Owner: Multi0
+		Owner: Neutral
 		Location: 5,5
 	AWaypoint3: waypoint
-		Owner: Multi0
+		Owner: Neutral
 		Location: 7,3
 	AWaypoint4: waypoint
-		Owner: Multi0
+		Owner: Neutral
 		Location: 5,9
 	AWaypoint5: waypoint
-		Owner: Multi0
+		Owner: Neutral
 		Location: 7,7
 	AWaypoint6: waypoint
-		Owner: Multi0
+		Owner: Neutral
 		Location: 9,5
 	BSpawn: mpspawn
-		Owner: Multi1
+		Owner: Neutral
 		Location: 6,59
 	BWaypoint1: waypoint
-		Owner: Multi1
+		Owner: Neutral
 		Location: 7,62
 	BWaypoint2: waypoint
-		Owner: Multi1
+		Owner: Neutral
 		Location: 5,60
 	BWaypoint3: waypoint
-		Owner: Multi1
+		Owner: Neutral
 		Location: 3,58
 	BWaypoint4: waypoint
-		Owner: Multi1
+		Owner: Neutral
 		Location: 9,60
 	BWaypoint5: waypoint
-		Owner: Multi1
+		Owner: Neutral
 		Location: 7,58
 	BWaypoint6: waypoint
-		Owner: Multi1
+		Owner: Neutral
 		Location: 5,56
 	CSpawn: mpspawn
-		Owner: Multi2
+		Owner: Neutral
 		Location: 59,59
 	CWaypoint1: waypoint
-		Owner: Multi2
+		Owner: Neutral
 		Location: 62,58
 	CWaypoint2: waypoint
-		Owner: Multi2
+		Owner: Neutral
 		Location: 60,60
 	CWaypoint3: waypoint
-		Owner: Multi2
+		Owner: Neutral
 		Location: 58,62
 	CWaypoint4: waypoint
-		Owner: Multi2
+		Owner: Neutral
 		Location: 60,56
 	CWaypoint5: waypoint
-		Owner: Multi2
+		Owner: Neutral
 		Location: 58,58
 	CWaypoint6: waypoint
-		Owner: Multi2
+		Owner: Neutral
 		Location: 56,60
 	DSpawn: mpspawn
-		Owner: Multi3
+		Owner: Neutral
 		Location: 59,6
 	DWaypoint1: waypoint
-		Owner: Multi3
+		Owner: Neutral
 		Location: 58,3
 	DWaypoint2: waypoint
-		Owner: Multi3
+		Owner: Neutral
 		Location: 60,5
 	DWaypoint3: waypoint
-		Owner: Multi3
+		Owner: Neutral
 		Location: 62,7
 	DWaypoint4: waypoint
-		Owner: Multi3
+		Owner: Neutral
 		Location: 56,5
 	DWaypoint5: waypoint
-		Owner: Multi3
+		Owner: Neutral
 		Location: 58,7
 	DWaypoint6: waypoint
-		Owner: Multi3
+		Owner: Neutral
 		Location: 60,9
 
 Smudges:

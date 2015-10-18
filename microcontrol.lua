@@ -34,7 +34,6 @@ end
 
 function InitWaves()
   return {
-    { {'dtrk'}, { 'ftrk' }, {}, {}, {}, {} },
     -- Round 1
     {
       { 'e1', 'e1', 'e1', 'e1', 'e1' },
@@ -46,39 +45,111 @@ function InitWaves()
     },
     -- Round 2
     {
-      { 'e1', 'e1', 'e1', 'e1', 'e1' },
-      { 'e1', 'e1', 'e1', 'e1', 'e1' },
-      { 'medi' },
       { 'medi' },
       { 'e1', 'e1', 'e1', 'e1', 'e1' },
-      {}
+      { 'medi' },
+      { 'e1', 'e1', 'e1', 'e1', 'e1' },
+      {},
+      { 'e1', 'e1', 'e1', 'e1', 'e1' }
     },
     -- Round 3
     {
-      { 'e1', 'e1', 'e1', 'e1', 'e1' },
+      { 'medi', 'dog' },
       { 'e1', 'e1', 'e1', 'e1', 'e1' },
       { 'medi', 'dog' },
-      { 'medi', 'dog' },
+      { 'e1', 'e1', 'e1', 'e1', 'e1' },
       { 'e1', 'e1', 'e1', 'e1', 'e1' },
       { 'e1', 'e1', 'e1', 'e1', 'e1' }
+    },
+    -- Round 4
+    {
+      {},
+      { 'e3', 'e3', 'e3' },
+      {},
+      { 'ftrk' },
+      { 'e1', 'e1', 'e1', 'e1', 'e1' },
+      { 'ftrk' }
     }
+    -- Round 5
   }
 end
 
+function ShowScoreboard(players)
+  local msg = '[scoreboard] '
+  Utils.Do(players, function(player)
+    msg = msg .. player.Player.Name .. ' - ' .. player.Points .. '. '
+  end)
+  Msg(msg)
+end
+
 function BeginGame(players, waves)
-  -- local totalPlayers = #players
   local totalRounds = TableSize(waves)
   local currentRound = 1
 
-  -- while currentRound != totalRounds + 1 do
-    BeginRound(currentRound, waves[currentRound], players)
-    -- currentRound = currentRound + 1
- -- end
+  BeginRound(currentRound, waves, players, totalRounds)
 end
 
-function BeginRound(currentRound, wave, players)
+function IsHusk(actor)
+  return EndsWith(string.lower(actor.Type), '.husk')
+end
+
+function EndsWith(str, tail)
+  return #str >= #tail and string.sub(str, 1 + #str - #tail) == tail
+end
+
+function EndRound()
+  local unitsToDestroy = Map.ActorsInBox(Map.TopLeft,Map.BottomRight, function(actor)
+    return IsHusk(actor) or actor.Owner ~= neutral or actor.HasProperty('Crate')
+  end)
+
+  Utils.Do(unitsToDestroy, function(actor)
+    if not actor.IsDead then
+      -- Keep player from spamming move commands.
+      actor.Owner=neutral
+      actor.Stop()
+      actor.Destroy()
+      Trigger.OnIdle(actor, function(a)
+        a.Destroy()
+      end)
+    end
+  end)
+end
+
+function EndGame(players)
+  local bestScore = 0
+  local winner
+
+  Utils.Do(players, function(player)
+    if player.Points > bestScore then
+      bestScore = player.Points
+      winner = player
+    end
+  end)
+
+  Msg('Player ' .. winner.Player.Name .. ' won the game!')
+
+  Utils.Do(players, function(player)
+    if player == winner then
+      winner.Player.MarkCompletedObjective(winner.Player.AddPrimaryObjective('win'))
+    else
+      player.Player.MarkFailedObjective(player.Player.AddPrimaryObjective('lose'))
+    end
+  end)
+end
+
+function BeginRound(currentRound, waves, players, totalRounds)
+  if currentRound > totalRounds then
+    EndGame(players)
+    return
+  end
+
   Msg('Round ' .. currentRound)
 
+  Utils.Do(players, function(player)
+    Media.PlaySpeechNotification(player.Player, 'ReinforcementsArrived')
+  end)
+
+  local wave = waves[currentRound]
   local winCandidates = {}
 
   for i=1,4 do
@@ -87,15 +158,28 @@ function BeginRound(currentRound, wave, players)
     if player then
       winCandidates[i] = i
       local armySize = 0
+      local armyArrivedSize = 0
+
+
+      player.RoundArmy = {}
 
       for j, squad in ipairs(wave) do
-        local actorsSquad =
-          Reinforcements.Reinforce(player.Player, squad, { player.Spawnpoint,
-                                   player.Waypoints[j].Location })
-
         armySize = armySize + TableSize(squad)
 
-        Utils.Do(actorsSquad, function(actor)
+        player.RoundArmy[j] =
+          Reinforcements.Reinforce(neutral, squad, { player.Spawnpoint,
+                                   player.Waypoints[j].Location }, 25, function(actor)
+                                     armyArrivedSize = armyArrivedSize + 1
+                                     if armyArrivedSize == armySize then
+                                       Utils.Do(player.RoundArmy, function(sq)
+                                         Utils.Do(sq, function(a)
+                                           a.Owner = player.Player
+                                         end)
+                                       end)
+                                     end
+                                   end)
+
+        Utils.Do(player.RoundArmy[j], function(actor)
           Trigger.OnKilled(actor, function()
             armySize = armySize - 1
 
@@ -104,7 +188,15 @@ function BeginRound(currentRound, wave, players)
 
               if TableSize(winCandidates) == 1 then
                 for _, winner in pairs(winCandidates) do
-                  Msg('Player ' .. players[winner].Player.Name .. ' won the round!')
+                  local winnerPlayer = players[winner]
+                  Msg('Player ' .. winnerPlayer.Player.Name .. ' won the round!')
+                  EndRound()
+                  winnerPlayer.Points = winnerPlayer.Points + 1
+                  ShowScoreboard(players)
+
+                  Trigger.AfterDelay(DateTime.Seconds(2), function()
+                    BeginRound(currentRound + 1, waves, players, totalRounds)
+                  end)
                 end
               end
             end
@@ -116,7 +208,6 @@ function BeginRound(currentRound, wave, players)
 
   -- ParadropRankCrates()
 end
-
 
 function InitPlayers()
   local waypoints = {
@@ -171,10 +262,6 @@ function WorldLoaded()
   local waves = InitWaves()
 
   Trigger.AfterDelay(DateTime.Seconds(2), function()
-    Utils.Do(players, function(player)
-      Media.PlaySpeechNotification(player.Player, 'MissionTimerInitialised')
-    end)
-
     BeginGame(players, waves)
   end)
 end
