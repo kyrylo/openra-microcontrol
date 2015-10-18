@@ -1,0 +1,381 @@
+MapFormat: 7
+
+RequiresMod: ra
+
+Title: Micro Control
+
+Description: A map for practicing micro control of units
+
+Author: Kyrylo Silin
+
+Tileset: SNOW
+
+MapSize: 66,66
+
+Bounds: 1,1,64,64
+
+Visibility: Lobby
+
+Type: Minigame
+
+Videos:
+
+Options:
+	Crates: False
+	Fog: False
+	Shroud: False
+	AllyBuildRadius: False
+	FragileAlliances: False
+	StartingCash: 0
+	TechLevel: unrestricted
+	ConfigurableStartingUnits: False
+
+Players:
+	PlayerReference@Neutral:
+		Name: Neutral
+		OwnsWorld: True
+		NonCombatant: True
+		Faction: england
+	PlayerReference@Creeps:
+		Name: Creeps
+		NonCombatant: True
+		Faction: england
+	PlayerReference@Multi0:
+		Name: Multi0
+		Playable: True
+		Faction: Random
+		Enemies: Creeps
+	PlayerReference@Multi3:
+		Name: Multi3
+		Playable: True
+		Faction: Random
+		Enemies: Creeps
+	PlayerReference@Multi2:
+		Name: Multi2
+		Playable: True
+		Faction: Random
+		Enemies: Creeps
+	PlayerReference@Multi1:
+		Name: Multi1
+		Playable: True
+		Faction: Random
+		Enemies: Creeps
+
+Actors:
+	Actor24: t11
+		Owner: Neutral
+		Location: 34,14
+	Actor25: t11
+		Owner: Neutral
+		Location: 6,22
+	Actor26: t15
+		Owner: Neutral
+		Location: 3,20
+	Actor27: tc03
+		Owner: Neutral
+		Location: 32,12
+	Actor28: tc01
+		Owner: Neutral
+		Location: 30,12
+	Actor29: t14
+		Owner: Neutral
+		Location: 31,11
+	Actor30: tc03
+		Owner: Neutral
+		Location: 53,41
+	Actor31: tc02
+		Owner: Neutral
+		Location: 51,38
+	Actor32: tc04
+		Owner: Neutral
+		Location: 51,39
+	Actor33: t16
+		Owner: Neutral
+		Location: 52,41
+	Actor34: t13
+		Owner: Neutral
+		Location: 53,39
+	Actor35: t16
+		Owner: Neutral
+		Location: 55,41
+	Actor36: t17
+		Owner: Neutral
+		Location: 55,39
+	Actor37: t08
+		Owner: Neutral
+		Location: 55,39
+	Actor38: t11
+		Owner: Neutral
+		Location: 42,50
+	Actor39: t14
+		Owner: Neutral
+		Location: 42,51
+	Actor40: t17
+		Owner: Neutral
+		Location: 45,51
+	Actor41: tc01
+		Owner: Neutral
+		Location: 30,51
+	Actor42: tc02
+		Owner: Neutral
+		Location: 36,51
+	Actor43: tc03
+		Owner: Neutral
+		Location: 28,51
+	Actor44: t08
+		Owner: Neutral
+		Location: 39,53
+	Actor45: v06
+		Owner: Neutral
+		Location: 34,52
+	Actor46: v14
+		Owner: Neutral
+		Location: 33,53
+	Actor47: v16
+		Owner: Neutral
+		Location: 34,53
+	Actor48: v18
+		Owner: Neutral
+		Location: 33,52
+	Actor49: v17
+		Owner: Neutral
+		Location: 34,51
+	Actor50: tc04
+		Owner: Neutral
+		Location: 26,41
+	Actor51: tc05
+		Owner: Neutral
+		Location: 28,43
+	Actor52: t17
+		Owner: Neutral
+		Location: 31,45
+	Actor53: tc01
+		Owner: Neutral
+		Location: 37,41
+	Actor54: tc02
+		Owner: Neutral
+		Location: 37,43
+	Actor55: tc03
+		Owner: Neutral
+		Location: 39,44
+	Actor56: tc01
+		Owner: Neutral
+		Location: 27,21
+	Actor57: t16
+		Owner: Neutral
+		Location: 19,28
+	Actor58: tc02
+		Owner: Neutral
+		Location: 13,47
+	Actor59: tc03
+		Owner: Neutral
+		Location: 15,41
+	Actor60: t11
+		Owner: Neutral
+		Location: 43,23
+	Actor61: t10
+		Owner: Neutral
+		Location: 38,14
+	Actor62: t16
+		Owner: Neutral
+		Location: 37,10
+	Actor63: tc01
+		Owner: Neutral
+		Location: 25,5
+	Actor64: tc02
+		Owner: Neutral
+		Location: 47,5
+	Actor65: tc01
+		Owner: Neutral
+		Location: 59,18
+	Actor66: tc03
+		Owner: Neutral
+		Location: 60,20
+	Actor67: tc02
+		Owner: Neutral
+		Location: 58,19
+	Actor68: t13
+		Owner: Neutral
+		Location: 58,20
+	Actor69: t02
+		Owner: Neutral
+		Location: 57,31
+	Actor70: t11
+		Owner: Neutral
+		Location: 57,32
+	Actor71: t15
+		Owner: Neutral
+		Location: 58,31
+	Actor72: t16
+		Owner: Neutral
+		Location: 59,32
+	Actor73: t10
+		Owner: Neutral
+		Location: 48,57
+	Actor74: boxes06
+		Owner: Neutral
+		Location: 44,58
+	Actor75: boxes09
+		Owner: Neutral
+		Location: 45,59
+	Actor76: t08
+		Owner: Neutral
+		Location: 20,59
+	Actor77: tc01
+		Owner: Neutral
+		Location: 15,56
+	Actor78: tc05
+		Owner: Neutral
+		Location: 22,62
+	Actor79: t11
+		Owner: Neutral
+		Location: 43,58
+	Actor80: tc01
+		Owner: Neutral
+		Location: 15,7
+	Actor81: tc05
+		Owner: Neutral
+		Location: 16,8
+	Actor82: tc03
+		Owner: Neutral
+		Location: 18,3
+	Actor83: v07
+		Owner: Neutral
+		Location: 5,37
+	Actor84: v10
+		Owner: Neutral
+		Location: 20,56
+	Actor85: v05
+		Owner: Neutral
+		Location: 46,59
+	Actor86: v02
+		Owner: Neutral
+		Location: 60,25
+	Actor87: tc01
+		Owner: Neutral
+		Location: 4,39
+	Actor88: tc03
+		Owner: Neutral
+		Location: 1,44
+	Actor89: tc04
+		Owner: Neutral
+		Location: 5,48
+	Actor90: t16
+		Owner: Neutral
+		Location: 3,24
+	Actor91: t15
+		Owner: Neutral
+		Location: 20,54
+	Actor92: t15
+		Owner: Neutral
+		Location: 44,56
+	ASpawn: mpspawn
+		Owner: Multi0
+		Location: 6,6
+	AWaypoint1: waypoint
+		Owner: Multi0
+		Location: 3,7
+	AWaypoint2: waypoint
+		Owner: Multi0
+		Location: 5,5
+	AWaypoint3: waypoint
+		Owner: Multi0
+		Location: 7,3
+	AWaypoint4: waypoint
+		Owner: Multi0
+		Location: 5,9
+	AWaypoint5: waypoint
+		Owner: Multi0
+		Location: 7,7
+	AWaypoint6: waypoint
+		Owner: Multi0
+		Location: 9,5
+	BSpawn: mpspawn
+		Owner: Multi1
+		Location: 6,59
+	BWaypoint1: waypoint
+		Owner: Multi1
+		Location: 7,62
+	BWaypoint2: waypoint
+		Owner: Multi1
+		Location: 5,60
+	BWaypoint3: waypoint
+		Owner: Multi1
+		Location: 3,58
+	BWaypoint4: waypoint
+		Owner: Multi1
+		Location: 9,60
+	BWaypoint5: waypoint
+		Owner: Multi1
+		Location: 7,58
+	BWaypoint6: waypoint
+		Owner: Multi1
+		Location: 5,56
+	CSpawn: mpspawn
+		Owner: Multi2
+		Location: 59,59
+	CWaypoint1: waypoint
+		Owner: Multi2
+		Location: 62,58
+	CWaypoint2: waypoint
+		Owner: Multi2
+		Location: 60,60
+	CWaypoint3: waypoint
+		Owner: Multi2
+		Location: 58,62
+	CWaypoint4: waypoint
+		Owner: Multi2
+		Location: 60,56
+	CWaypoint5: waypoint
+		Owner: Multi2
+		Location: 58,58
+	CWaypoint6: waypoint
+		Owner: Multi2
+		Location: 56,60
+	DSpawn: mpspawn
+		Owner: Multi3
+		Location: 59,6
+	DWaypoint1: waypoint
+		Owner: Multi3
+		Location: 58,3
+	DWaypoint2: waypoint
+		Owner: Multi3
+		Location: 60,5
+	DWaypoint3: waypoint
+		Owner: Multi3
+		Location: 62,7
+	DWaypoint4: waypoint
+		Owner: Multi3
+		Location: 56,5
+	DWaypoint5: waypoint
+		Owner: Multi3
+		Location: 58,7
+	DWaypoint6: waypoint
+		Owner: Multi3
+		Location: 60,9
+
+Smudges:
+
+Rules:
+	World:
+		-SpawnMPUnits:
+		-MPStartLocations:
+		LuaScript:
+			Scripts: microcontrol.lua
+	Player:
+		-ConquestVictoryConditions:
+	powerproxy.paratroopers:
+		ParatroopersPower:
+			DropItems: crate
+
+Sequences:
+
+VoxelSequences:
+
+Weapons:
+
+Voices:
+
+Notifications:
+
+Translations:
