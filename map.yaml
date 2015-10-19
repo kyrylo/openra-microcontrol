@@ -44,21 +44,37 @@ Players:
 		Name: Multi0
 		Playable: True
 		Faction: Random
-		Enemies: Creeps
-	PlayerReference@Multi3:
-		Name: Multi3
-		Playable: True
-		Faction: Random
-		Enemies: Creeps
-	PlayerReference@Multi2:
-		Name: Multi2
-		Playable: True
-		Faction: Random
+		LockFaction: True
+		LockSpawn: True
+		Spawn: 1
+		LockTeam: True
 		Enemies: Creeps
 	PlayerReference@Multi1:
 		Name: Multi1
 		Playable: True
 		Faction: Random
+		LockFaction: True
+		LockSpawn: True
+		Spawn: 2
+		LockTeam: True
+		Enemies: Creeps
+	PlayerReference@Multi2:
+		Name: Multi2
+		Playable: True
+		Faction: Random
+		LockFaction: True
+		LockSpawn: True
+		Spawn: 3
+		LockTeam: True
+		Enemies: Creeps
+	PlayerReference@Multi3:
+		Name: Multi3
+		Playable: True
+		Faction: Random
+		LockFaction: True
+		LockSpawn: True
+		Spawn: 4
+		LockTeam: True
 		Enemies: Creeps
 
 Actors:
