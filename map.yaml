@@ -29,7 +29,7 @@ Options:
 	StartingCash: 0
 	TechLevel: unrestricted
 	ConfigurableStartingUnits: False
-    ShortGame: False
+	ShortGame: False
 
 Players:
 	PlayerReference@Neutral:
@@ -44,8 +44,8 @@ Players:
 	PlayerReference@Multi0:
 		Name: Multi0
 		Playable: True
-		Faction: Random
 		LockFaction: True
+		Faction: Random
 		LockSpawn: True
 		Spawn: 1
 		LockTeam: True
@@ -53,8 +53,8 @@ Players:
 	PlayerReference@Multi1:
 		Name: Multi1
 		Playable: True
-		Faction: Random
 		LockFaction: True
+		Faction: Random
 		LockSpawn: True
 		Spawn: 2
 		LockTeam: True
@@ -62,8 +62,8 @@ Players:
 	PlayerReference@Multi2:
 		Name: Multi2
 		Playable: True
-		Faction: Random
 		LockFaction: True
+		Faction: Random
 		LockSpawn: True
 		Spawn: 3
 		LockTeam: True
@@ -71,8 +71,8 @@ Players:
 	PlayerReference@Multi3:
 		Name: Multi3
 		Playable: True
-		Faction: Random
 		LockFaction: True
+		Faction: Random
 		LockSpawn: True
 		Spawn: 4
 		LockTeam: True
@@ -370,6 +370,60 @@ Actors:
 	DWaypoint6: waypoint
 		Owner: Neutral
 		Location: 60,9
+	SCrateWaypoint1: waypoint
+		Owner: Neutral
+		Location: 18,44
+	SCrateWaypoint2: waypoint
+		Owner: Neutral
+		Location: 47,44
+	SCrateWaypoint3: waypoint
+		Owner: Neutral
+		Location: 47,19
+	SCrateWaypoint4: waypoint
+		Owner: Neutral
+		Location: 18,20
+	SCrateWaypoint5: waypoint
+		Owner: Neutral
+		Location: 29,23
+	SCrateWaypoint6: waypoint
+		Owner: Neutral
+		Location: 42,24
+	SCrateWaypoint7: waypoint
+		Owner: Neutral
+		Location: 45,36
+	SCrateWaypoint8: waypoint
+		Owner: Neutral
+		Location: 51,29
+	SCrateWaypoint9: waypoint
+		Owner: Neutral
+		Location: 31,45
+	SCrateWaypoint10: waypoint
+		Owner: Neutral
+		Location: 39,42
+	SCrateWaypoint11: waypoint
+		Owner: Neutral
+		Location: 16,30
+	SCrateWaypoint12: waypoint
+		Owner: Neutral
+		Location: 22,36
+	CCrateWaypoint1: waypoint
+		Owner: Neutral
+		Location: 32,32
+	CCrateWaypoint2: waypoint
+		Owner: Neutral
+		Location: 34,32
+	CCrateWaypoint3: waypoint
+		Owner: Neutral
+		Location: 33,33
+	CCrateWaypoint4: waypoint
+		Owner: Neutral
+		Location: 31,33
+	CCrateWaypoint5: waypoint
+		Owner: Neutral
+		Location: 32,33
+	CCrateWaypoint6: waypoint
+		Owner: Neutral
+		Location: 33,32
 
 Smudges:
 
@@ -379,11 +433,22 @@ Rules:
 		-MPStartLocations:
 		LuaScript:
 			Scripts: microcontrol.lua
+		-CrateSpawner:
+
 	Player:
 		-ConquestVictoryConditions:
-	powerproxy.paratroopers:
-		ParatroopersPower:
-			DropItems: crate
+	MONEYCRATE:
+		GiveCashCrateAction:
+			Amount: 100
+	RANKCRATE:
+		Inherits: ^Crate
+		Crate:
+			Lifetime: 0
+		LevelUpCrateAction:
+			Levels: 2
+			MaxExtraCollectors: 0
+       	Tooltip:
+			Name: Rank Crate (+2)
 
 Sequences:
 
@@ -392,6 +457,8 @@ VoxelSequences:
 Weapons:
 
 Voices:
+
+Music:
 
 Notifications:
 

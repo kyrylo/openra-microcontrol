@@ -48,18 +48,20 @@ end
 function ClearMap()
   local unitsToDestroy =
     Map.ActorsInBox(Map.TopLeft,Map.BottomRight, function(actor)
-      return IsHusk(actor) or actor.Owner ~= neutral or actor.HasProperty('Crate')
+      return IsHusk(actor) or actor.Owner ~= neutral or
+        actor.Type == 'rankcrate' or actor.Type == 'moneycrate' or
+        actor.Type == 'healcrate'
     end)
 
   Utils.Do(unitsToDestroy, function(actor)
     if not actor.IsDead then
       -- Keep player from spamming move commands.
-      actor.Owner=neutral
+      actor.Owner = neutral
       actor.Stop()
       actor.Destroy()
-      Trigger.OnIdle(actor, function(a)
-        a.Destroy()
-      end)
+      if actor.HasProperty('ScriptTriggers') then
+        Trigger.OnIdle(actor, function(a) a.Destroy() end)
+      end
     end
   end)
 end
@@ -165,7 +167,9 @@ function SpawnUnits(player, wave)
         Location = player.Waypoints[i].Location
       }
 
-      table.insert(player.RoundArmy, Actor.Create(unit, true, initTable))
+      local actor = Actor.Create(unit, true, initTable)
+      actor.Scatter()
+      table.insert(player.RoundArmy, actor)
     end
   end
 
@@ -214,9 +218,44 @@ function BeginRound(game, players, waves)
       SetTriggers(game, player, players, waves)
     end
   end
+
+  SpawnCrates(game)
 end
 
+function SpawnCrates(game)
+  SpawnCenterCrates(game)
+  SpawnSideCrates(game)
+end
 
+function SpawnCenterCrates(game)
+  local location1
+  local location2
+  local location3
+
+  while location1 == location2 or location1 == location3 or location2 == location3 do
+    location1 = Utils.Random(game.CenterCrateLocations).Location
+    location2 = Utils.Random(game.CenterCrateLocations).Location
+    location3 = Utils.Random(game.CenterCrateLocations).Location
+  end
+
+  local locations = { location1, location2, location3 }
+
+  for i, loc in ipairs(locations) do
+    Actor.Create(Utils.Random(game.CrateTypes), true, {
+      Owner = neutral,
+      Location = loc
+    })
+  end
+end
+
+function SpawnSideCrates(game)
+  for i=1,8 do
+    Actor.Create(Utils.Random(game.CrateTypes), true, {
+      Owner = neutral,
+      Location = Utils.Random(game.SideCrateLocations).Location
+    })
+  end
+end
 
 function BeginGame(game, players)
   local waves = InitWaves()
@@ -227,17 +266,31 @@ function BeginGame(game, players)
   BeginRound(game, players, waves)
 end
 
-function InitGame(players)
-  return {
-    RoundWinners = {},
-    CurrentRound = 0,
-    TotalRounds = 0
-  }
-end
-
 ------------------------------------------------------------
 -- Game initialisation functions
 ------------------------------------------------------------
+
+function InitGame(players)
+  local centerCrateLocations = {
+    CCrateWaypoint1, CCrateWaypoint2, CCrateWaypoint3, CCrateWaypoint4,
+    CCrateWaypoint5, CCrateWaypoint6
+  }
+
+  local sideCrateLocations = {
+    SCrateWaypoint1, SCrateWaypoint2, SCrateWaypoint3, SCrateWaypoint4,
+    SCrateWaypoint5, SCrateWaypoint6, SCrateWaypoint7, SCrateWaypoint8,
+    SCrateWaypoint9, SCrateWaypoint10, SCrateWaypoint11, SCrateWaypoint12
+  }
+
+  return {
+    RoundWinners = {},
+    CurrentRound = 0,
+    TotalRounds = 0,
+    CenterCrateLocations = centerCrateLocations,
+    SideCrateLocations = sideCrateLocations,
+    CrateTypes = { 'rankcrate', 'moneycrate', 'healcrate' }
+  }
+end
 
 function InitWaves()
   return {
@@ -374,7 +427,7 @@ function InitWaves()
       { 'jeep', 'ftrk', 'ftrk', '2tnk', '2tnk' },
       { '3tnk', '3tnk', '3tnk', '3tnk', '3tnk' },
       { 'arty', 'arty', 'apc', 'apc', '1tnk'   },
-      { '1tnk', '1tnk', 'mnly.ap', 'mnly.ap', 'mnly.ap' }
+      { '1tnk', '1tnk', 'mnly.at', 'mnly.at', 'mnly.at' }
     }
   }
 end
@@ -393,6 +446,7 @@ function InitPlayers()
 
   -- Neutral player owns crates and such
   neutral = Player.GetPlayer('Neutral')
+  creeps = Player.GetPlayer('Creeps')
 
   local players = {}
 
