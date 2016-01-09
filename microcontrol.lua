@@ -1,5 +1,9 @@
 local map_vsn = 1
 
+------------------------------------------------------------
+-- Support functions that make Lua suck less
+------------------------------------------------------------
+
 function TableSize(T)
   local count = 0
 
@@ -9,6 +13,231 @@ function TableSize(T)
 
   return count
 end
+
+FilterTable = function(t, filterIter)
+  local out = {}
+
+  for k, v in pairs(t) do
+    if filterIter(v, k, t) then out[k] = v end
+  end
+
+  return out
+end
+
+------------------------------------------------------------
+-- Game functions
+------------------------------------------------------------
+
+function ShowScoreboard(players)
+  local scores = ''
+  Utils.Do(players, function(player)
+    scores = scores .. player.Player.Name .. ' - ' .. player.Points .. '. '
+  end)
+
+  Media.DisplayMessage(scores, 'Scoreboard')
+end
+
+function IsHusk(actor)
+  return EndsWith(string.lower(actor.Type), '.husk')
+end
+
+function EndsWith(str, tail)
+  return #str >= #tail and string.sub(str, 1 + #str - #tail) == tail
+end
+
+function ClearMap()
+  local unitsToDestroy =
+    Map.ActorsInBox(Map.TopLeft,Map.BottomRight, function(actor)
+      return IsHusk(actor) or actor.Owner ~= neutral or actor.HasProperty('Crate')
+    end)
+
+  Utils.Do(unitsToDestroy, function(actor)
+    if not actor.IsDead then
+      -- Keep player from spamming move commands.
+      actor.Owner=neutral
+      actor.Stop()
+      actor.Destroy()
+      Trigger.OnIdle(actor, function(a)
+        a.Destroy()
+      end)
+    end
+  end)
+end
+
+function EndRound(game, players, waves)
+  ClearMap()
+  ShowScoreboard(players)
+  Utils.Do(players, function(player)
+    player.RoundDeathCounter = 0
+    player.RoundArmy = {}
+  end)
+
+  game.CurrentRound = game.CurrentRound + 1
+
+  if game.CurrentRound > game.TotalRounds then
+    EndGame(players)
+    return
+  end
+
+  Trigger.AfterDelay(DateTime.Seconds(5), function()
+    BeginRound(game, players, waves)
+  end)
+end
+
+function FindWinnerByPoints(players)
+  local winner
+  local bestScore = 0
+
+  Utils.Do(players, function(player)
+    if player.Points > bestScore then
+      bestScore = player.Points
+      winner = player
+    end
+  end)
+
+  return winner
+end
+
+function FindWinnerByCash(players)
+  local winner
+  local maxCash = 0
+
+  Utils.Do(players, function(player)
+    if player.Player.Cash > maxCash then
+      maxCash = player.Player.Cash
+      winner = player
+    end
+  end)
+
+  return winner
+end
+
+function ReportFinalScore(players)
+  local winner = FindWinnerByPoints(players)
+  local winCandidates = FilterTable(players, function(player)
+    return player.Points == winner.Points
+  end)
+
+  if TableSize(winCandidates) == 1 then
+    Media.DisplayMessage(
+      winner.Player.Name .. ' earned ' .. winner.Points .. ' points and became the new Micro Control champion!',
+      'Game'
+    )
+  else
+    Media.DisplayMessage(
+      'Multiple players have earned ' .. winner.Points .. ' points. The winner is decided by the amount of earned cash...',
+      'Game'
+    )
+
+    winner = FindWinnerByCash(winCandidates)
+
+    Media.DisplayMessage(
+      winner.Player.Name .. ' earned ' .. winner.Player.Cash .. ' dollars and became the new Micro Control champion!',
+      'Game'
+    )
+  end
+
+  return winner
+end
+
+function EndGame(players)
+  local winner = ReportFinalScore(players)
+
+  Trigger.AfterDelay(DateTime.Seconds(4), function()
+    Utils.Do(players, function(player)
+      if player == winner then
+        winner.Player.MarkCompletedObjective(winner.Player.AddPrimaryObjective('win'))
+      else
+        player.Player.MarkFailedObjective(player.Player.AddPrimaryObjective('lose'))
+      end
+    end)
+  end)
+end
+
+function SpawnUnits(player, wave)
+  local initTable
+  local units = {}
+
+  for i, squad in ipairs(wave) do
+    for j, unit in ipairs(squad) do
+      initTable = {
+        Owner = player.Player,
+        Location = player.Waypoints[i].Location
+      }
+
+      table.insert(player.RoundArmy, Actor.Create(unit, true, initTable))
+    end
+  end
+
+  return units
+end
+
+function SetTriggers(game, player, players, waves)
+  Utils.Do(player.RoundArmy, function(actor)
+    Trigger.OnKilled(actor, function()
+      player.RoundDeathCounter = player.RoundDeathCounter + 1
+
+      -- Media.DisplayMessage(player.Player.Name .. '..' .. player.RoundDeathCounter .. '/' .. TableSize(player.RoundArmy), 'DEBUG')
+
+      if player.RoundDeathCounter == TableSize(player.RoundArmy) then
+        game.RoundWinners[player] = nil
+        Media.DisplayMessage(player.Player.Name .. ' is no more.', 'Game')
+      end
+
+      if TableSize(game.RoundWinners) == 1 then
+        local winner = next(game.RoundWinners)
+        Media.DisplayMessage(winner.Player.Name .. ' won the round!', 'Game')
+        winner.Points = winner.Points + 1
+        EndRound(game, players, waves)
+      end
+    end)
+  end)
+end
+
+function BeginRound(game, players, waves)
+  Media.DisplayMessage(
+    'Starting round ' .. game.CurrentRound .. ' out of ' .. game.TotalRounds .. '!',
+    'Game'
+  )
+  Utils.Do(players, function(player)
+    Media.PlaySpeechNotification(player.Player, 'ReinforcementsArrived')
+  end)
+
+  local player
+
+  for i=1,4 do
+    player = players[i]
+
+    if player then
+      game.RoundWinners[player] = player
+      SpawnUnits(player, waves[game.CurrentRound])
+      SetTriggers(game, player, players, waves)
+    end
+  end
+end
+
+
+
+function BeginGame(game, players)
+  local waves = InitWaves()
+
+  game.TotalRounds = TableSize(waves)
+  game.CurrentRound = 1
+
+  BeginRound(game, players, waves)
+end
+
+function InitGame(players)
+  return {
+    RoundWinners = {},
+    CurrentRound = 0,
+    TotalRounds = 0
+  }
+end
+
+------------------------------------------------------------
+-- Game initialisation functions
+------------------------------------------------------------
 
 function InitWaves()
   return {
@@ -150,151 +379,6 @@ function InitWaves()
   }
 end
 
-function ShowScoreboard(players)
-  local scores = ''
-  Utils.Do(players, function(player)
-    scores = scores .. player.Player.Name .. ' - ' .. player.Points .. '. '
-  end)
-
-  Media.DisplayMessage(scores, 'Scoreboard')
-end
-
-function IsHusk(actor)
-  return EndsWith(string.lower(actor.Type), '.husk')
-end
-
-function EndsWith(str, tail)
-  return #str >= #tail and string.sub(str, 1 + #str - #tail) == tail
-end
-
-function ClearMap()
-  local unitsToDestroy =
-    Map.ActorsInBox(Map.TopLeft,Map.BottomRight, function(actor)
-      return IsHusk(actor) or actor.Owner ~= neutral or actor.HasProperty('Crate')
-    end)
-
-  Utils.Do(unitsToDestroy, function(actor)
-    if not actor.IsDead then
-      -- Keep player from spamming move commands.
-      actor.Owner=neutral
-      actor.Stop()
-      actor.Destroy()
-      Trigger.OnIdle(actor, function(a)
-        a.Destroy()
-      end)
-    end
-  end)
-end
-
-function EndRound(game, players, waves)
-  ClearMap()
-  ShowScoreboard(players)
-  Utils.Do(players, function(player)
-    player.RoundDeathCounter = 0
-    player.RoundArmy = {}
-  end)
-
-  game.CurrentRound = game.CurrentRound + 1
-
-  if game.CurrentRound > game.TotalRounds then
-    EndGame(players)
-    return
-  end
-
-  Trigger.AfterDelay(DateTime.Seconds(5), function()
-    BeginRound(game, players, waves)
-  end)
-end
-
-function EndGame(players)
-  local bestScore = 0
-  local winner = players[1]
-
-  Utils.Do(players, function(player)
-    if player.Points > bestScore then
-      bestScore = player.Points
-      winner = player
-    end
-  end)
-
-  Media.DisplayMessage(
-    winner.Player.Name .. ' earned ' .. bestScore .. ' points and became the new Micro Control champion!',
-    'Game'
-  )
-
-  Trigger.AfterDelay(DateTime.Seconds(2), function()
-    Utils.Do(players, function(player)
-      if player == winner then
-        winner.Player.MarkCompletedObjective(winner.Player.AddPrimaryObjective('win'))
-      else
-        player.Player.MarkFailedObjective(player.Player.AddPrimaryObjective('lose'))
-      end
-    end)
-  end)
-end
-
-function SpawnUnits(player, wave)
-  local initTable
-  local units = {}
-
-  for i, squad in ipairs(wave) do
-    for j, unit in ipairs(squad) do
-      initTable = {
-        Owner = player.Player,
-        Location = player.Waypoints[i].Location
-      }
-
-      table.insert(player.RoundArmy, Actor.Create(unit, true, initTable))
-    end
-  end
-
-  return units
-end
-
-function SetTriggers(game, player, players, waves)
-  Utils.Do(player.RoundArmy, function(actor)
-    Trigger.OnKilled(actor, function()
-      player.RoundDeathCounter = player.RoundDeathCounter + 1
-
-      -- Media.DisplayMessage(player.Player.Name .. '..' .. player.RoundDeathCounter .. '/' .. TableSize(player.RoundArmy), 'DEBUG')
-
-      if player.RoundDeathCounter == TableSize(player.RoundArmy) then
-        game.RoundWinners[player] = nil
-        Media.DisplayMessage(player.Player.Name .. ' is no more.', 'Game')
-      end
-
-      if TableSize(game.RoundWinners) == 1 then
-        local winner = next(game.RoundWinners)
-        Media.DisplayMessage(winner.Player.Name .. ' won the round!', 'Game')
-        winner.Points = winner.Points + 1
-        EndRound(game, players, waves)
-      end
-    end)
-  end)
-end
-
-function BeginRound(game, players, waves)
-  Media.DisplayMessage(
-    'Starting round ' .. game.CurrentRound .. ' out of ' .. game.TotalRounds .. '!',
-    'Game'
-  )
-  Utils.Do(players, function(player)
-    Media.PlaySpeechNotification(player.Player, 'ReinforcementsArrived')
-  end)
-
-  local player
-
-  for i=1,4 do
-    player = players[i]
-
-    if player then
-      game.RoundWinners[player] = player
-      SpawnUnits(player, waves[game.CurrentRound])
-      SetTriggers(game, player, players, waves)
-    end
-  end
-end
-
 function InitPlayers()
   local waypoints = {
     -- Player 1 (TopLeft)
@@ -327,23 +411,6 @@ function InitPlayers()
   end
 
   return players
-end
-
-function BeginGame(game, players)
-  local waves = InitWaves()
-
-  game.TotalRounds = TableSize(waves)
-  game.CurrentRound = 1
-
-  BeginRound(game, players, waves)
-end
-
-function InitGame(players)
-  return {
-    RoundWinners = {},
-    CurrentRound = 0,
-    TotalRounds = 0
-  }
 end
 
 function WorldLoaded()
