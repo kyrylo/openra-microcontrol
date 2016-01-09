@@ -22,13 +22,14 @@ Videos:
 
 Options:
 	Crates: False
-	Fog: False
+	Fog: True
 	Shroud: False
 	AllyBuildRadius: False
 	FragileAlliances: False
 	StartingCash: 0
 	TechLevel: unrestricted
 	ConfigurableStartingUnits: False
+    ShortGame: False
 
 Players:
 	PlayerReference@Neutral:
