@@ -1,5 +1,4 @@
 function CheckTimeout(game, players, waves, delay)
-  Media.DisplayMessage('CHECKING', 'DEBUG')
   game.TimeoutChecksLeft = game.TimeoutChecksLeft - 1
 
   if game.TimeoutChecksLeft == 0 then
@@ -17,9 +16,7 @@ function CheckTimeout(game, players, waves, delay)
   end
 
   Trigger.AfterDelay(DateTime.Seconds(delay), function()
-    Media.DisplayMessage('WHOOP', 'DEBUG')
     if game.ShouldCheckTimeout then
-      Media.DisplayMessage('SETTING AGAIN', 'DEBUG')
       CheckTimeout(game, players, waves, delay)
     end
   end)
