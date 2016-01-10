@@ -17,18 +17,24 @@ function SpawnCenterCrates(game)
   local locations = { location1, location2, location3 }
 
   for i, loc in ipairs(locations) do
-    Actor.Create(Utils.Random(game.CrateTypes), true, {
-      Owner = neutral,
-      Location = loc
-    })
+    table.insert(
+      game.SpawnedCrates,
+      Actor.Create(Utils.Random(game.CrateTypes), true, {
+        Owner = neutral,
+        Location = loc
+      }
+    ))
   end
 end
 
 function SpawnSideCrates(game)
   for i=1,8 do
-    Actor.Create(Utils.Random(game.CrateTypes), true, {
-      Owner = neutral,
-      Location = Utils.Random(game.SideCrateLocations).Location
-    })
+    table.insert(
+      game.SpawnedCrates,
+      Actor.Create(Utils.Random(game.CrateTypes), true, {
+        Owner = neutral,
+        Location = Utils.Random(game.SideCrateLocations).Location
+      })
+    )
   end
 end

@@ -2,23 +2,28 @@ function IsHusk(actor)
   return EndsWith(string.lower(actor.Type), '.husk')
 end
 
-function ClearMap()
-  local unitsToDestroy =
-    Map.ActorsInBox(Map.TopLeft, Map.BottomRight, function(actor)
-      return IsHusk(actor) or actor.Owner ~= neutral or
-        actor.Type == 'rankcrate' or actor.Type == 'moneycrate' or
-        actor.Type == 'healcrate'
-    end)
-
-  Utils.Do(unitsToDestroy, function(actor)
-    if not actor.IsDead then
-      -- Keep player from spamming move commands.
-      actor.Owner = neutral
-      actor.Stop()
-      actor.Destroy()
-      if actor.HasProperty('ScriptTriggers') then
+-- Shitty function, which doesn't reliably clear actors. I have to call it twice.
+function ClearMap(game, players)
+  Utils.Do(players, function(player)
+    Utils.Do(player.RoundArmy, function(actor)
+      if not actor.IsDead then
+        actor.Owner = neutral
+        actor.Stop()
+        actor.Destroy()
         Trigger.OnIdle(actor, function(a) a.Destroy() end)
       end
+    end)
+  end)
+
+  Utils.Do(game.SpawnedCrates, function(crate)
+    if not crate.IsDead then
+      crate.Destroy()
+    end
+  end)
+
+  Utils.Do(Map.ActorsInBox(Map.TopLeft,Map.BottomRight,MustBeDestroyed), function(actor)
+    if IsHusk(actor) then
+      actor.Destroy()
     end
   end)
 end
@@ -85,6 +90,12 @@ function BeginRound(game, players, waves)
     'Game'
   )
 
+  ClearMap(game, players)
+  Utils.Do(players, function(player)
+    player.RoundDeathCounter = 0
+    player.RoundArmy = {}
+  end)
+
   local evenRound = game.CurrentRound % 2 == 0
   Utils.Do(players, function(player)
     if game.CurrentRound == TableSize(waves) then
@@ -113,13 +124,9 @@ function BeginRound(game, players, waves)
 end
 
 function EndRound(game, players, waves)
-  ClearMap()
-  ShowScoreboard(players)
+  ClearMap(game, players)
 
-  Utils.Do(players, function(player)
-    player.RoundDeathCounter = 0
-    player.RoundArmy = {}
-  end)
+  ShowScoreboard(players)
 
   game.ShouldCheckTimeout = false
   game.CurrentRound = game.CurrentRound + 1
@@ -173,6 +180,7 @@ function InitGame(players)
     CenterCrateLocations = centerCrateLocations,
     SideCrateLocations = sideCrateLocations,
     CrateTypes = { 'rankcrate', 'moneycrate', 'healcrate' },
+    SpawnedCrates = {},
     ResetTimeout = function(game)
       game.TimeoutChecksLeft = totalTimeoutChecks
     end
