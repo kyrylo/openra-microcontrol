@@ -84,8 +84,16 @@ function BeginRound(game, players, waves)
     'Starting round ' .. game.CurrentRound .. ' out of ' .. game.TotalRounds .. '!',
     'Game'
   )
+
+  local evenRound = game.CurrentRound % 2 == 0
   Utils.Do(players, function(player)
-    Media.PlaySpeechNotification(player.Player, 'ReinforcementsArrived')
+    if game.CurrentRound == TableSize(waves) then
+      Media.PlaySpeechNotification(player.Player, 'ReinforcementsArrived')
+    elseif evenRound then
+      Media.PlaySpeechNotification(player.Player, 'AlliedReinforcementsArrived')
+    else
+      Media.PlaySpeechNotification(player.Player, 'SovietReinforcementsArrived')
+    end
   end)
 
   local player
