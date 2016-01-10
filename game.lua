@@ -161,7 +161,7 @@ function InitGame(players)
     SCrateWaypoint9, SCrateWaypoint10, SCrateWaypoint11, SCrateWaypoint12
   }
 
-  local totalTimeoutChecks = 30
+  local totalTimeoutChecks = 25
 
   return {
     RoundWinners = {},
