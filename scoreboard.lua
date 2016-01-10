@@ -7,6 +7,15 @@ function ShowScoreboard(players)
   Media.DisplayMessage(scores, 'Scoreboard')
 end
 
+function ShowCashboard(players)
+  local cash = ''
+  Utils.Do(players, function(player)
+    cash = cash .. player.Player.Name .. ' - $' .. player.Player.Cash .. '. '
+  end)
+
+  Media.DisplayMessage(cash, 'Scoreboard')
+end
+
 function ReportFinalScore(players)
   local winner = FindWinnerByPoints(players)
   local winCandidates = FilterTable(players, function(player)
@@ -24,6 +33,7 @@ function ReportFinalScore(players)
       'Game'
     )
 
+    ShowCashboard(players)
     winner = FindWinnerByCash(winCandidates)
 
     Media.DisplayMessage(
