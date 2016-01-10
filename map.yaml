@@ -432,7 +432,7 @@ Rules:
 		-SpawnMPUnits:
 		-MPStartLocations:
 		LuaScript:
-			Scripts: microcontrol.lua
+			Scripts: microcontrol.lua, waves.lua, helpers.lua, game.lua, scoreboard.lua, crates.lua, timer.lua
 		-CrateSpawner:
 
 	Player:
