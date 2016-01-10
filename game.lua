@@ -1,7 +1,3 @@
-function IsHusk(actor)
-  return EndsWith(string.lower(actor.Type), '.husk')
-end
-
 -- Shitty function, which doesn't reliably clear actors. I have to call it twice.
 function ClearMap(game, players)
   Utils.Do(players, function(player)
@@ -51,14 +47,11 @@ end
 function SetTriggers(game, player, players, waves)
   Utils.Do(player.RoundArmy, function(actor)
     Trigger.OnDamaged(actor, function(a, attacker)
---      Media.DisplayMessage('The camper timer has been restored.', 'Game')
       game.ResetTimeout(game)
     end)
 
     Trigger.OnKilled(actor, function()
       player.RoundDeathCounter = player.RoundDeathCounter + 1
-
-      -- Media.DisplayMessage(player.Player.Name .. '..' .. player.RoundDeathCounter .. '/' .. TableSize(player.RoundArmy), 'DEBUG')
 
       if player.RoundDeathCounter == TableSize(player.RoundArmy) then
         game.RoundWinners[player] = nil
@@ -120,7 +113,7 @@ function BeginRound(game, players, waves)
   end
 
   SpawnCrates(game)
-  CheckTimeout(game, players, waves, 6)
+  CheckTimeout(game, players, waves, 5)
 end
 
 function EndRound(game, players, waves)
@@ -168,7 +161,7 @@ function InitGame(players)
     SCrateWaypoint9, SCrateWaypoint10, SCrateWaypoint11, SCrateWaypoint12
   }
 
-  local totalTimeoutChecks = 5
+  local totalTimeoutChecks = 30
 
   return {
     RoundWinners = {},

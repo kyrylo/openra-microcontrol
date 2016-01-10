@@ -18,6 +18,13 @@ end
 
 function ReportFinalScore(players)
   local winner = FindWinnerByPoints(players)
+
+  if not winner then
+    Media.DisplayMessage('None of the players won the game.', 'Game')
+    Media.DisplayMessage('Looks like no-one scored at least one point.', 'Game')
+    return
+  end
+
   local winCandidates = FilterTable(players, function(player)
     return player.Points == winner.Points
   end)

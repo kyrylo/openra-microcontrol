@@ -25,3 +25,7 @@ end
 function EndsWith(str, tail)
   return #str >= #tail and string.sub(str, 1 + #str - #tail) == tail
 end
+
+function IsHusk(actor)
+  return EndsWith(string.lower(actor.Type), '.husk')
+end
