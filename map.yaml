@@ -451,11 +451,28 @@ Rules:
 			MaxExtraCollectors: 0
 		Tooltip:
 			Name: Rank Crate
+	UNITCRATE:
+		Inherits: ^Crate
+		GiveUnitCrateAction@mgg:
+			SelectionShares: 1
+			Units: mgg
+		GiveUnitCrateAction@harv:
+			SelectionShares: 1
+			Units: harv
+		GiveUnitCrateAction@mrj:
+			SelectionShares: 1
+			Units: mrj
+		GiveUnitCrateAction@truk:
+			SelectionShares: 1
+			Units: truk
+		Crate:
+			TerrainTypes: Clear, Road, Ore, Beach
+		Tooltip:
+			Name: Unit Crate
 	CENTERCAMERA:
 		Inherits: CAMERA
 		RevealsShroud:
 			Range: 6c5
-
 
 Sequences:
 

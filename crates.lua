@@ -1,6 +1,7 @@
 function SpawnCrates(game)
   SpawnCenterCrates(game)
   SpawnSideCrates(game)
+  ParadropRandomCrates(game)
 end
 
 function SpawnCenterCrates(game)
@@ -36,5 +37,27 @@ function SpawnSideCrates(game)
         Location = Utils.Random(game.SideCrateLocations).Location
       })
     )
+  end
+end
+
+function ParadropRandomCrates(game)
+  local lz
+  local start
+  local transport
+  local actor
+
+  for i=1,3 do
+    lz = Map.RandomCell()
+    start = Map.CenterOfCell(Map.RandomEdgeCell()) + WVec.New(0, 0, Actor.CruiseAltitude('badr'))
+    transport = Actor.Create('badr', true, {
+      CenterPosition = start,
+      Owner = neutral,
+      Facing = (Map.CenterOfCell(lz) - start).Facing
+    })
+
+    actor = Actor.Create('unitcrate', false, { Owner = neutral })
+    table.insert(game.SpawnedCrates, actor)
+    transport.LoadPassenger(actor)
+    transport.Paradrop(lz)
   end
 end

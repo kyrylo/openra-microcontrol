@@ -29,3 +29,8 @@ end
 function IsHusk(actor)
   return EndsWith(string.lower(actor.Type), '.husk')
 end
+
+function IsUnitFromCrate(actor)
+  return actor.Type == 'mgg' or actor.Type == 'harv' or
+    actor.Type == 'mrj' or actor.Type == 'truk'
+end

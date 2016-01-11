@@ -18,7 +18,7 @@ function ClearMap(game, players)
   end)
 
   Utils.Do(Map.ActorsInBox(Map.TopLeft,Map.BottomRight,MustBeDestroyed), function(actor)
-    if IsHusk(actor) then
+    if IsHusk(actor) or IsUnitFromCrate(actor) then
       actor.Destroy()
     end
   end)
