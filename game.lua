@@ -68,6 +68,12 @@ function SetTriggers(game, player, players, waves)
   end)
 end
 
+function FocusCameraOn(player)
+  if player.Player.IsLocalPlayer then
+    Camera.Position = player.Waypoints[5].CenterPosition
+  end
+end
+
 function BeginGame(game, players)
   local waves = InitWaves()
 
@@ -109,6 +115,7 @@ function BeginRound(game, players, waves)
       game.RoundWinners[player] = player
       SpawnUnits(player, waves[game.CurrentRound])
       SetTriggers(game, player, players, waves)
+      FocusCameraOn(player)
     end
   end
 
