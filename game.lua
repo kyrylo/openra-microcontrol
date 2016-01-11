@@ -9,6 +9,10 @@ function ClearMap(game, players)
         Trigger.OnIdle(actor, function(a) a.Destroy() end)
       end
     end)
+
+    Utils.Do(player.Airstrikes, function(airstrike)
+      if not airstrike.IsDead then airstrike.Destroy() end
+    end)
   end)
 
   Utils.Do(game.SpawnedCrates, function(crate)
@@ -74,6 +78,18 @@ function FocusCameraOn(player)
   end
 end
 
+function GiveAirstrike(player, airstrikeCount)
+  Trigger.AfterDelay(DateTime.Seconds(30), function()
+     Media.PlaySpeechNotification(player.Player, 'SpyPlaneReady')
+     for i=1,airstrikeCount do
+       table.insert(
+         player.Airstrikes,
+         Actor.Create("powerproxy.parabombs", true, { Owner = player.Player })
+       )
+     end
+  end)
+end
+
 function BeginGame(game, players)
   local waves = InitWaves()
 
@@ -93,6 +109,7 @@ function BeginRound(game, players, waves)
   Utils.Do(players, function(player)
     player.RoundDeathCounter = 0
     player.RoundArmy = {}
+    player.Airstrikes = {}
   end)
 
   local evenRound = game.CurrentRound % 2 == 0
@@ -122,6 +139,7 @@ function BeginRound(game, players, waves)
       })
       Trigger.AfterDelay(DateTime.Seconds(10), CenterCamera.Destroy)
 
+      GiveAirstrike(player, 2)
       FocusCameraOn(player)
     end
   end
@@ -221,7 +239,8 @@ function InitPlayers()
         Waypoints = waypoints[i],
         Points = 0,
         RoundArmy = {},
-        RoundDeathCounter = 0
+        RoundDeathCounter = 0,
+        Airstrikes = {}
       }
     end
   end
