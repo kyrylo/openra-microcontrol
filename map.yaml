@@ -424,6 +424,9 @@ Actors:
 	CCrateWaypoint6: waypoint
 		Owner: Neutral
 		Location: 33,32
+	CenterCameraWaypoint: camera
+		Owner: Neutral
+		Location: 32,32
 
 Smudges:
 
@@ -434,7 +437,6 @@ Rules:
 		LuaScript:
 			Scripts: microcontrol.lua, waves.lua, helpers.lua, game.lua, scoreboard.lua, crates.lua, timer.lua
 		-CrateSpawner:
-
 	Player:
 		-ConquestVictoryConditions:
 	MONEYCRATE:
@@ -447,8 +449,13 @@ Rules:
 		LevelUpCrateAction:
 			Levels: 2
 			MaxExtraCollectors: 0
-       	Tooltip:
-			Name: Rank Crate (+2)
+		Tooltip:
+			Name: Rank Crate
+	CENTERCAMERA:
+		Inherits: CAMERA
+		RevealsShroud:
+			Range: 6c5
+
 
 Sequences:
 

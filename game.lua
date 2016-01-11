@@ -115,6 +115,13 @@ function BeginRound(game, players, waves)
       game.RoundWinners[player] = player
       SpawnUnits(player, waves[game.CurrentRound])
       SetTriggers(game, player, players, waves)
+
+      local CenterCamera = Actor.Create("centercamera" , true, {
+        Owner = player.Player,
+        Location = CenterCameraWaypoint.Location
+      })
+      Trigger.AfterDelay(DateTime.Seconds(10), CenterCamera.Destroy)
+
       FocusCameraOn(player)
     end
   end
