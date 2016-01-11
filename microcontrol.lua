@@ -1,4 +1,4 @@
-local map_vsn = 1
+local map_vsn = 2
 
 function WorldLoaded()
   local game = InitGame()
