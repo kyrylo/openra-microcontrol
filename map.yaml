@@ -473,6 +473,10 @@ Rules:
 		Inherits: CAMERA
 		RevealsShroud:
 			Range: 6c5
+	MAPCAMERA:
+		Inherits: CAMERA
+		RevealsShroud:
+			Range: 37c512
 
 Sequences:
 

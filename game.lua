@@ -59,6 +59,9 @@ function SetTriggers(game, player, players, waves)
 
       if player.RoundDeathCounter == TableSize(player.RoundArmy) then
         game.RoundWinners[player] = nil
+        if TableSize(game.RoundWinners) > 1 then
+          RevealMap(player)
+        end
         Media.DisplayMessage(player.Player.Name .. ' is no more.', 'Game')
       end
 
@@ -75,6 +78,21 @@ end
 function FocusCameraOn(player)
   if player.Player.IsLocalPlayer then
     Camera.Position = player.Waypoints[5].CenterPosition
+  end
+end
+
+function RevealMap(player)
+  local mapCamera = Actor.Create("mapcamera" , true, {
+     Owner = player.Player,
+     Location = CenterCameraWaypoint.Location
+  })
+
+  player.MapCamera = mapCamera
+end
+
+function HideMap(player)
+  if player.MapCamera and not player.MapCamera.IsDead then
+    player.MapCamera.Destroy()
   end
 end
 
@@ -149,6 +167,9 @@ function BeginRound(game, players, waves)
 end
 
 function EndRound(game, players, waves)
+  Utils.Do(players, function(player)
+    HideMap(player)
+  end)
   ClearMap(game, players)
 
   ShowScoreboard(players)
@@ -240,7 +261,8 @@ function InitPlayers()
         Points = 0,
         RoundArmy = {},
         RoundDeathCounter = 0,
-        Airstrikes = {}
+        Airstrikes = {},
+        MapCamera = nil
       }
     end
   end
